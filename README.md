@@ -1,4 +1,4 @@
-# Show Remaining Time for Product expiry, services etc. easy to use 
+# How to convert a timestamp to a time ago format in PHP 
 ## _timestamp and other date format calculable_
 
 [![Behance](https://img.shields.io/badge/Behance-1769ff?logo=behance&logoColor=white)](https://behance.net/Irfan_Ghuori) [![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?logo=Facebook&logoColor=white)](https://facebook.com/irfan.whitehead) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/irfan-ghuori-39b410155/) [![Pinterest](https://img.shields.io/badge/Pinterest-%23E60023.svg?logo=Pinterest&logoColor=white)](https://pinterest.com/irfanghuori_) 
@@ -9,56 +9,111 @@
 ## Use example :
 ```sh
 use in classes
-private function GetTimeLeft($startDate){...}
-$this->GetTimeLeft($package_row->enddate);
+private or public - function TimeAgo($startDate){...} 
+$this->TimeAgo($package_row->enddate);
 
 use in functions
-$custome_date =  date("Y-m-d h:i:s");
-echo getTimeLeft(date);
+$custome_date =  $row->created_at;
+echo TimeAgo($custome_date);
+```
+
+Use in Laravel
+
+{{ timeAgo($order->created_at) }}
 ```
 
 
 
 ## Simple Function :
 ```sh
-function GetTimeLeft($startDate)
-    {
-        $now = new DateTime();
-        $then = new DateTime($startDate);
-        $timeLeft = 0;
-
-        // Only calculate time left if $then is still a future date
-        if ($now < $then) {
-            $difference = $now->diff($then);
-
-            $days = $difference->days;
-            $hours = $difference->h;
-            $minutes = $difference->i;
-
-            if ($days > 1) {
-                $timeLeft = $days . ' days';
-            } elseif ($days == 1) {
-                $timeLeft = $days . ' day';
-            } elseif ($days < 1) {
-
-                if ($hours > 1) {
-                    $timeLeft = $hours . ' hours';
-                } elseif ($hours == 1) {
-                    $timeLeft = $hours . ' hour';
-                } elseif ($hours < 1) {
-
-                    if ($minutes > 1) {
-                        $timeLeft = $minutes . ' minutes';
-                    } elseif ($minutes == 1) {
-                        $timeLeft = $minutes . ' minute';
-                    } elseif ($minutes < 1) {
-                        $timeLeft = 0;
-                    }
-                }
-            }
-        }
-        return $timeLeft;
-    }
+function TimeAgo($time, $short = false){ 
+    $SECOND = 1; 
+    $MINUTE = 60 * $SECOND; 
+    $HOUR = 60 * $MINUTE; 
+    $DAY = 24 * $HOUR; 
+    $MONTH = 30 * $DAY; 
+    $before = time() - $time; 
+ 
+    if($before < 0){ 
+        return "not yet"; 
+    } 
+ 
+    if($short){ 
+        if($before < 1 * $MINUTE){ 
+            return ($before <5) ? "just now" : $before . " ago"; 
+        } 
+ 
+        if($before < 2 * $MINUTE){ 
+            return "1m ago"; 
+        } 
+ 
+        if($before < 45 * $MINUTE){ 
+            return floor($before / 60) . "m ago"; 
+        } 
+ 
+        if($before < 90 * $MINUTE){ 
+            return "1h ago"; 
+        } 
+ 
+        if($before < 24 * $HOUR){ 
+            return floor($before / 60 / 60). "h ago"; 
+        } 
+ 
+        if($before < 48 * $HOUR){ 
+            return "1d ago"; 
+        } 
+ 
+        if($before < 30 * $DAY){ 
+            return floor($before / 60 / 60 / 24) . "d ago"; 
+        } 
+ 
+        if($before < 12 * $MONTH){ 
+            $months = floor($before / 60 / 60 / 24 / 30); 
+            return $months <= 1 ? "1mo ago" : $months . "mo ago"; 
+        }else{ 
+            $years = floor  ($before / 60 / 60 / 24 / 30 / 12); 
+            return $years <= 1 ? "1y ago" : $years."y ago"; 
+        } 
+    } 
+ 
+    if($before < 1 * $MINUTE){ 
+        return ($before <= 1) ? "just now" : $before . " seconds ago"; 
+    } 
+ 
+    if($before < 2 * $MINUTE){ 
+        return "a minute ago"; 
+    } 
+ 
+    if($before < 45 * $MINUTE){ 
+        return floor($before / 60) . " minutes ago"; 
+    } 
+ 
+    if($before < 90 * $MINUTE){ 
+        return "an hour ago"; 
+    } 
+ 
+    if($before < 24 * $HOUR){ 
+        return (floor($before / 60 / 60) == 1 ? 'about an hour' : floor($before / 60 / 60).' hours'). " ago"; 
+    } 
+ 
+    if($before < 48 * $HOUR){ 
+        return "yesterday"; 
+    } 
+ 
+    if($before < 30 * $DAY){ 
+        return floor($before / 60 / 60 / 24) . " days ago"; 
+    } 
+ 
+    if($before < 12 * $MONTH){ 
+        $months = floor($before / 60 / 60 / 24 / 30); 
+        return $months <= 1 ? "one month ago" : $months . " months ago"; 
+    }else{ 
+        $years = floor  ($before / 60 / 60 / 24 / 30 / 12); 
+        return $years <= 1 ? "one year ago" : $years." years ago"; 
+    } 
+ 
+    return "$time"; 
+}
 ```
 
 | format | 	Description |
